@@ -7,6 +7,7 @@ import com.example.demo.entities.Product;
 import com.example.demo.mapper.ResponseMapper;
 import com.example.demo.services.ProductService;
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -35,6 +36,12 @@ public class ProductController {
     public ResponseEntity<CommonResponse<Product>> getProductById(@PathVariable Integer id) {
         Product product = productService.getProductById(id);
         return ResponseEntity.ok(responseMapper.toResponse(product, null));
+    }
+
+    @PutMapping(AppPath.ID)
+    public ResponseEntity<CommonResponse<Product>> updateProduct(@PathVariable Integer id, @RequestBody Product updateProduct) {
+        Product existingProduct = productService.updateProduct(id, updateProduct);
+        return ResponseEntity.ok(responseMapper.toResponse(existingProduct, null));
     }
 
     @DeleteMapping(AppPath.ID)

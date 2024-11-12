@@ -5,6 +5,8 @@ import com.example.demo.dto.ProductResponse;
 import com.example.demo.entities.Product;
 import com.example.demo.services.ProductService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
@@ -45,6 +47,27 @@ public class ProductServiceImpl implements ProductService {
             return response.getBody();
         } catch (RestClientException e) {
             throw new RuntimeException("Failed to fetch product by id: " + e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public Product updateProduct(Integer id, Product updatedProduct) {
+        String url = String.format("%s/%d", urlProduct, id);
+        try {
+            Product existingProduct = getProductById(id);
+            if (existingProduct == null) {
+                throw new RuntimeException("Product with ID " + id + " not found.");
+            }
+
+            ResponseEntity<Product> response = restTemplate.exchange(
+                    url,
+                    HttpMethod.PUT,
+                    new HttpEntity<>(updatedProduct),
+                    Product.class
+            );
+            return response.getBody();
+        } catch (RestClientException e) {
+            throw new RuntimeException("Failed to update product: " + e.getMessage(), e);
         }
     }
 
